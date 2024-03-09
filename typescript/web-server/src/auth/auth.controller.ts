@@ -1,19 +1,20 @@
 import {
-  BadRequestException,
   Body,
   Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
   Post,
-  UnauthorizedException,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
 import { CreateUserDto, LoginUserDto } from 'src/user/user.dto';
-import * as bcrypt from 'bcrypt';
 
 import { RabbitMQService } from 'src/services/rabbitMqService';
-import { User } from 'src/user/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
-
-type LoggedInUser = Omit<User, 'password'>;
+import { AuthGuard } from './auth.guard';
+import { Public } from 'src/shared/public.decorator';
 
 @Controller('api/auth')
 export class AuthController {
@@ -23,6 +24,7 @@ export class AuthController {
     private jwtService: JwtService,
   ) {}
 
+  @Public()
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
     return await this.authService.register(createUserDto);
@@ -30,6 +32,8 @@ export class AuthController {
     // this.rabbitMQService.sendUserMessage(createUserDto);
   }
 
+  @Public()
+  @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(@Body() loginUserDto: LoginUserDto) {
     return await this.authService.login(
