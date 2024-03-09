@@ -8,6 +8,7 @@ import { RabbitMQService } from 'src/services/rabbitMqService';
 @Module({
   imports: [TypeOrmModule.forFeature([User])],
   controllers: [UserController],
-  providers: [UserService, RabbitMQService]
+  providers: [UserService, RabbitMQService],
+  exports: [UserService],
 })
 export class UserModule {}
