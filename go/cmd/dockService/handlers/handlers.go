@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+	"go-bike-share/shared/postgres"
 	"go-bike-share/shared/rabbitmq"
 	"net/http"
 	"os"
@@ -21,8 +23,10 @@ func UnlockDock(w http.ResponseWriter, r *http.Request) {
 	}
 
 	rmqConn := os.Getenv("RABBITMQ_URL")
-	rmq, err := rabbitmq.NewRabbitMQ(rmqConn, "dock", "unlock", "unlock")
+	fmt.Println(rmqConn)
+	rmq, err := rabbitmq.NewRabbitMQ("amqp://guest:guest@rabbitmq-mqtt:5672", "dock", "unlock", "unlock")
 
+	fmt.Println(rmq)
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
@@ -35,6 +39,21 @@ func UnlockDock(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 	}
+
+	pg, err := postgres.NewPostgres("bike-share-db", 5432, "postgres", "postgres", "postgres")
+	result, err := pg.ExecQuery("INSERT INTO public.test (dockid) VALUES ($1)", dockId)
+
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+	fmt.Println(result)
 	rmq.Close()
 
+}
+
+func ReportDock(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", "POST")
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+	}
 }

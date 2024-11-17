@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './interceptors/logging.interceptor';
+import { BikeModule } from './bike/bike.module';
+import { DockModule } from './dock/dock.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { LoggingInterceptor } from './interceptors/logging.interceptor';
     }),
     UserModule,
     AuthModule,
+    BikeModule,
+    DockModule,
   ],
   controllers: [],
   providers: [

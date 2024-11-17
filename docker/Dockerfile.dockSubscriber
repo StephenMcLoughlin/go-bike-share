@@ -1,0 +1,19 @@
+# Use the official Go image as a parent image
+FROM golang:latest
+
+# Set the working directory inside the container
+WORKDIR /app
+
+COPY go/go.mod .
+COPY go/go.sum .
+COPY ./go/cmd/dockSubscriber ./cmd/dockSubscriber
+COPY ./go/shared ./shared
+
+# Build the Go application from the dockService directory
+RUN go build -o main ./cmd/dockSubscriber
+
+# Expose the port your server listens on
+EXPOSE 5003
+
+# Define the command to run when the container starts
+CMD ["./main"]

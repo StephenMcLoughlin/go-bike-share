@@ -1,0 +1,71 @@
+version: "3"
+
+services:
+  # dock-service:
+  #   container_name: dock-service
+  #   build:
+  #     context: .
+  #     dockerfile: docker/Dockerfile.dockService
+  #   environment:
+  #     PORT: ${PORT}
+  #   ports:
+  #     - "5002:5002"
+
+  # dock-subscriber:
+  #   container_name: dock-subscriber
+  #   restart: unless-stopped
+  #   build:
+  #     context: .
+  #     dockerfile: docker/Dockerfile.dockSubscriber
+  #   environment:
+  #     RABBITMQ_URL: ${RABBITMQ_URL}
+  #     DB_HOST: ${DB_HOST}
+  #     DB_USER: ${DB_USER}
+  #     DB_PASSWORD: ${DB_PASSWORD}
+  #     DB_NAME: ${DB_NAME}
+  #   ports:
+  #     - "5003:5003"
+
+  bike-share-db:
+    image: postgres:latest
+    container_name: bike-share-db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    # volumes:
+    #   - ./dataset/init.sql:/docker-entrypoint-initdb.d/init.sql
+    #   - ./dataset/dock.csv:/docker-entrypoint-initdb.d/dock.csv
+    #   - ./postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  # rabbitmq:
+  #   container_name: rabbitmq-mqtt
+  #   build:
+  #     context: .
+  #     dockerfile: docker/rabbitmq/Dockerfile
+  #   image: rmq-mqtt2  # Replace with the image name you want to use
+  #   environment:
+  #     RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+  #     RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+  #   ports:
+  #     - "15672:15672"
+  #     - "5672:5672"
+  #     - "1883:1883"
+  #   volumes:
+  #     - $PWD/docker/var/lib/rabbitmq:/var/lib/rabbitmq
+  #   command: ["rabbitmq-server"]
+  #   expose:
+  #     - "15672"
+  #     - "5672"
+  #     - "1883"
+
+  # redis:
+  #   image: redis:latest
+  #   container_name: redis
+  #   expose:
+  #     - "6379"
+
+volumes:
+  postgres-data:
